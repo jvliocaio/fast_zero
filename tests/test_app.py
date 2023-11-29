@@ -41,23 +41,48 @@ def test_read_users_with_users(client, user):
 
 
 def test_update_user(client, user):
-    response = client.put(
-        '/users/1',
-        json={
+
+    user_id = user.id
+
+    if user_id is None:
+        response = client.put(
+            '/users/{}'.format(user_id),
+            json={
+                'username': 'bob',
+                'email': 'bob@example.com',
+                'password': 'mynewpassword',
+            },
+        )
+        assert response.status_code == 404
+        assert response.json() == {'detail': 'User not found'}
+
+    else:
+        response = client.put(
+            '/users/{}'.format(user_id),
+            json={
+                'username': 'bob',
+                'email': 'bob@example.com',
+                'password': 'mynewpassword',
+            },
+        )
+        assert response.status_code == 200
+        assert response.json() == {
             'username': 'bob',
             'email': 'bob@example.com',
-            'password': 'mynewpassword',
-        },
-    )
-    assert response.status_code == 200
-    assert response.json() == {
-        'username': 'bob',
-        'email': 'bob@example.com',
-        'id': 1,
-    }
+            'id': 1,
+        }
 
 
 def test_delete_user(client, user):
-    response = client.delete('/users/1')
-    assert response.status_code == 200
-    assert response.json() == {'detail': 'User deleted'}
+
+    user_id = user.id
+
+    if user_id is None:
+        response = client.delete('/users/{}'.format(user_id))
+        assert response.status_code == 404
+        assert response.json() == {'detail': 'User not found'}
+
+    else:
+        response = client.delete('/users/{}'.format(user_id))
+        assert response.status_code == 200
+        assert response.json() == {'detail': 'User deleted'}
