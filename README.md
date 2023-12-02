@@ -8,7 +8,7 @@
 - [x] Configurando o banco de dados e gerenciando migrações com Alembic
 - [x] Integrando Banco de Dados a API
 - [X] Autenticação e Autorização com JWT
-- [ ] Refatorando a Estrutura do Projeto
+- [x] Refatorando a Estrutura do Projeto
 - [ ] Tornando o sistema de autenticação robusto
 - [ ] Criando Rotas CRUD para Gerenciamento de Tarefas em FastAPI
 - [ ] Dockerizando a nossa aplicação e introduzindo o PostgreSQL
