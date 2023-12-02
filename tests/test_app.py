@@ -40,13 +40,12 @@ def test_read_users_with_users(client, user):
     assert response.json() == {'users': [user_schema]}
 
 
-def test_update_user(client, user):
+def test_update_user(client, user, token):
 
-    user_id = user.id
-
-    if user_id is None:
+    if user.id is None:
         response = client.put(
-            '/users/{}'.format(user_id),
+            f'/users/{user.id}',
+            headers={'Authorization': f'Bearer {token}'},
             json={
                 'username': 'bob',
                 'email': 'bob@example.com',
@@ -58,7 +57,8 @@ def test_update_user(client, user):
 
     else:
         response = client.put(
-            '/users/{}'.format(user_id),
+            f'/users/{user.id}',
+            headers={'Authorization': f'Bearer {token}'},
             json={
                 'username': 'bob',
                 'email': 'bob@example.com',
@@ -73,16 +73,32 @@ def test_update_user(client, user):
         }
 
 
-def test_delete_user(client, user):
+def test_delete_user(client, user, token):
 
-    user_id = user.id
-
-    if user_id is None:
-        response = client.delete('/users/{}'.format(user_id))
+    if user.id is None:
+        response = client.delete(
+            f'/users/{user.id}',
+            headers={'Authorization': f'Bearer {token}'},
+        )
         assert response.status_code == 404
         assert response.json() == {'detail': 'User not found'}
 
     else:
-        response = client.delete('/users/{}'.format(user_id))
+        response = client.delete(
+            f'/users/{user.id}',
+            headers={'Authorization': f'Bearer {token}'},
+        )
         assert response.status_code == 200
         assert response.json() == {'detail': 'User deleted'}
+
+
+def test_get_token(client, user):
+    response = client.post(
+        '/token',
+        data={'username': user.email, 'password': user.clean_password},
+    )
+    token = response.json()
+
+    assert response.status_code == 200
+    assert 'access_token' in token
+    assert 'token_type' in token
